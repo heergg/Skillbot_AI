@@ -4,32 +4,23 @@ import os
 
 USER_FILE = "users.csv"
 
-# Create user file if not exists
+# create user file if it doesn't exist
 if not os.path.exists(USER_FILE):
-    pd.DataFrame(columns=["username", "password"]).to_csv(USER_FILE, index=False)
+    pd.DataFrame(columns=["email", "password"]).to_csv(USER_FILE, index=False)
 
-def signup(username, password):
+def signup(email, password):
     users = pd.read_csv(USER_FILE)
-    if username in users["username"].values:
-        st.error("Username already exists. Try signing in.")
+    if email in users["email"].values:
         return False
-    else:
-        new_user = pd.DataFrame({"username": [username], "password": [password]})
-        new_user.to_csv(USER_FILE, mode='a', header=False, index=False)
-        st.success("Signup successful! Please sign in now.")
-        return True
+    pd.DataFrame({"email": [email], "password": [password]}).to_csv(USER_FILE, mode="a", header=False, index=False)
+    return True
 
-def login(username, password):
+def login(email, password):
     users = pd.read_csv(USER_FILE)
-    if username in users["username"].values:
-        stored_pw = users.loc[users["username"] == username, "password"].values[0]
+    if email in users["email"].values:
+        stored_pw = users.loc[users["email"] == email, "password"].values[0]
         if stored_pw == password:
             st.session_state["logged_in"] = True
-            st.session_state["username"] = username
-            st.success(f"Welcome back, {username}!")
+            st.session_state["email"] = email
             return True
-        else:
-            st.error("Incorrect password.")
-    else:
-        st.error("User not found. Please sign up first.")
     return False
