@@ -12,22 +12,25 @@ st.markdown("""
     <style>
     body {
         font-family: 'Poppins', sans-serif;
-        background: linear-gradient(to right, #a1c4fd, #c2e9fb); /* 👈 Updated gradient */
+        background-color: #f5f9ff; /* 👈 Soft light background */
     }
     .stApp {
         max-width: 700px;
         margin: auto;
-        background-color: #ffffff;
+        background-color: #ffffff; /* Main app container */
         padding: 30px 40px;
         border-radius: 15px;
-        box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+        box-shadow: 0px 4px 10px rgba(0,0,0,0.08);
     }
     h1, h2, h3 {
-        color: #005b96;
+        color: #004c91; /* Calm navy blue for headings */
         text-align: center;
     }
+    p, label, div, span {
+        color: #333333;
+    }
     .stButton > button {
-        background-color: #0288d1;
+        background-color: #1e88e5;
         color: white;
         border: none;
         padding: 12px 25px;
@@ -39,11 +42,11 @@ st.markdown("""
         margin-top: 10px;
     }
     .stButton > button:hover {
-        background-color: #0277bd;
+        background-color: #1565c0;
         transform: scale(1.03);
     }
     .question-box {
-        background-color: #f0f4f8;
+        background-color: #f0f6ff; /* Light blue box */
         padding: 25px;
         border-radius: 12px;
         text-align: center;
@@ -225,7 +228,7 @@ elif st.session_state.page == "results":
 
     st.write("### Your RIASEC Scores")
     fig, ax = plt.subplots()
-    ax.bar(riasec_scores.index, riasec_scores.values, color="#4fc3f7")
+    ax.bar(riasec_scores.index, riasec_scores.values, color="#64b5f6")
     ax.set_ylabel("Average Score")
     ax.set_title("RIASEC Interest Profile")
     st.pyplot(fig)
@@ -254,5 +257,6 @@ elif st.session_state.page == "careers":
     if st.button("🏠 Back to Start"):
         restart()
         st.rerun()
+
 
 
