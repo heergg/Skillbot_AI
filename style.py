@@ -164,7 +164,7 @@ def next_question(selected):
     st.session_state.index += 1
     if st.session_state.index >= len(questions):
         st.session_state.page = "results"
-    st.experimental_rerun()
+    st.rerun()
 
 def save_responses():
     df = questions.copy()
