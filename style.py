@@ -10,72 +10,127 @@ st.set_page_config(page_title="SkillBot Interest Profiler", layout="centered")
 # -------------------- CUSTOM CSS --------------------
 st.markdown("""
     <style>
+    /* ----------- GLOBAL STYLES ----------- */
     body {
         font-family: 'Poppins', sans-serif;
-        background: linear-gradient(to right, #e0f7fa, #f1f8e9);
+        background: linear-gradient(135deg, #f8fbff, #fdfcfb);
+        color: #333333;
     }
     .stApp {
-        max-width: 700px;
+        max-width: 800px;
         margin: auto;
         background-color: #ffffff;
-        padding: 30px 40px;
-        border-radius: 15px;
-        box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+        padding: 40px 30px;
+        border-radius: 16px;
+        box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.08);
     }
+
     h1, h2, h3 {
-        color: #005b96;
+        color: #007acc;
         text-align: center;
+        font-weight: 600;
     }
+    h1 {
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+
+    /* ----------- BUTTON STYLES ----------- */
     .stButton > button {
-        background-color: #0288d1;
-        color: white;
+        background: linear-gradient(to right, #81d4fa, #4fc3f7);
+        color: #ffffff !important;
         border: none;
-        padding: 12px 25px;
-        border-radius: 8px;
+        padding: 12px 20px;
+        border-radius: 10px;
         font-size: 16px;
-        font-weight: 500;
+        font-weight: 600;
         transition: all 0.3s ease;
         width: 100%;
-        margin-top: 10px;
+        margin-top: 12px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
     }
     .stButton > button:hover {
-        background-color: #0277bd;
-        transform: scale(1.03);
+        background: linear-gradient(to right, #4fc3f7, #29b6f6);
+        transform: scale(1.04);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
+
+    /* ----------- QUESTION CARD ----------- */
     .question-box {
-        background-color: #f0f4f8;
-        padding: 25px;
-        border-radius: 12px;
+        background: #f9fbfd;
+        padding: 25px 20px;
+        border-radius: 14px;
         text-align: center;
-        margin-top: 20px;
-        box-shadow: 0px 3px 8px rgba(0,0,0,0.05);
+        margin: 25px 0;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        border: 1px solid #e3f2fd;
     }
+    .question-box h3 {
+        color: #0288d1;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+    .question-box p {
+        font-size: 1.1rem;
+        color: #444;
+        margin-bottom: 0;
+    }
+
+    /* ----------- EMOJI BUTTONS ----------- */
     .emoji-btn {
         display: inline-block;
-        background-color: #e3f2fd;
-        color: #1565c0;
+        background: #e3f2fd;
+        color: #0277bd;
         font-size: 18px;
         font-weight: 600;
         border-radius: 10px;
         padding: 12px 18px;
         margin: 8px;
-        transition: 0.3s ease;
+        transition: all 0.3s ease;
         cursor: pointer;
         text-align: center;
-        width: 140px;
+        width: 150px;
+        border: 1px solid #bbdefb;
     }
     .emoji-btn:hover {
-        background-color: #bbdefb;
+        background: #bbdefb;
         transform: translateY(-3px);
     }
-    @media screen and (max-width: 600px) {
+
+    /* ----------- CHART SECTION ----------- */
+    .css-1kyxreq {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+    }
+
+    /* ----------- INFO / TEXT BOXES ----------- */
+    .stAlert {
+        border-radius: 10px;
+        font-size: 0.95rem;
+    }
+
+    /* ----------- RESPONSIVE DESIGN ----------- */
+    @media screen and (max-width: 768px) {
+        .stApp {
+            padding: 25px 20px;
+        }
         .emoji-btn {
             width: 100%;
-            margin: 5px 0;
+            margin: 6px 0;
+            font-size: 16px;
+        }
+        h1 {
+            font-size: 1.6rem;
+        }
+        .question-box p {
+            font-size: 1rem;
         }
     }
     </style>
 """, unsafe_allow_html=True)
+
 
 # -------------------- RESPONSES FILE SETUP --------------------
 RESPONSES_FILE = "responses/responses.xlsx"
