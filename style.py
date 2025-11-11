@@ -10,127 +10,72 @@ st.set_page_config(page_title="SkillBot Interest Profiler", layout="centered")
 # -------------------- CUSTOM CSS --------------------
 st.markdown("""
     <style>
-    /* ----------- GLOBAL STYLES ----------- */
     body {
         font-family: 'Poppins', sans-serif;
-        background: linear-gradient(135deg, #f8fbff, #fdfcfb);
-        color: #333333;
+        background: linear-gradient(to right, #e0f7fa, #f1f8e9);
     }
     .stApp {
-        max-width: 800px;
+        max-width: 700px;
         margin: auto;
         background-color: #ffffff;
-        padding: 40px 30px;
-        border-radius: 16px;
-        box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.08);
+        padding: 30px 40px;
+        border-radius: 15px;
+        box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
     }
-
     h1, h2, h3 {
-        color: #007acc;
+        color: #005b96;
         text-align: center;
-        font-weight: 600;
     }
-    h1 {
-        font-size: 2rem;
-        margin-bottom: 10px;
-    }
-
-    /* ----------- BUTTON STYLES ----------- */
     .stButton > button {
-        background: linear-gradient(to right, #81d4fa, #4fc3f7);
-        color: #ffffff !important;
+        background-color: #0288d1;
+        color: white;
         border: none;
-        padding: 12px 20px;
-        border-radius: 10px;
+        padding: 12px 25px;
+        border-radius: 8px;
         font-size: 16px;
-        font-weight: 600;
+        font-weight: 500;
         transition: all 0.3s ease;
         width: 100%;
-        margin-top: 12px;
-        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        margin-top: 10px;
     }
     .stButton > button:hover {
-        background: linear-gradient(to right, #4fc3f7, #29b6f6);
-        transform: scale(1.04);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        background-color: #0277bd;
+        transform: scale(1.03);
     }
-
-    /* ----------- QUESTION CARD ----------- */
     .question-box {
-        background: #f9fbfd;
-        padding: 25px 20px;
-        border-radius: 14px;
+        background-color: #f0f4f8;
+        padding: 25px;
+        border-radius: 12px;
         text-align: center;
-        margin: 25px 0;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        border: 1px solid #e3f2fd;
+        margin-top: 20px;
+        box-shadow: 0px 3px 8px rgba(0,0,0,0.05);
     }
-    .question-box h3 {
-        color: #0288d1;
-        font-weight: 600;
-        margin-bottom: 10px;
-    }
-    .question-box p {
-        font-size: 1.1rem;
-        color: #444;
-        margin-bottom: 0;
-    }
-
-    /* ----------- EMOJI BUTTONS ----------- */
     .emoji-btn {
         display: inline-block;
-        background: #e3f2fd;
-        color: #0277bd;
+        background-color: #e3f2fd;
+        color: #1565c0;
         font-size: 18px;
         font-weight: 600;
         border-radius: 10px;
         padding: 12px 18px;
         margin: 8px;
-        transition: all 0.3s ease;
+        transition: 0.3s ease;
         cursor: pointer;
         text-align: center;
-        width: 150px;
-        border: 1px solid #bbdefb;
+        width: 140px;
     }
     .emoji-btn:hover {
-        background: #bbdefb;
+        background-color: #bbdefb;
         transform: translateY(-3px);
     }
-
-    /* ----------- CHART SECTION ----------- */
-    .css-1kyxreq {
-        background: #ffffff;
-        border-radius: 12px;
-        padding: 20px;
-        box-shadow: 0 3px 10px rgba(0,0,0,0.05);
-    }
-
-    /* ----------- INFO / TEXT BOXES ----------- */
-    .stAlert {
-        border-radius: 10px;
-        font-size: 0.95rem;
-    }
-
-    /* ----------- RESPONSIVE DESIGN ----------- */
-    @media screen and (max-width: 768px) {
-        .stApp {
-            padding: 25px 20px;
-        }
+    @media screen and (max-width: 600px) {
         .emoji-btn {
             width: 100%;
-            margin: 6px 0;
-            font-size: 16px;
-        }
-        h1 {
-            font-size: 1.6rem;
-        }
-        .question-box p {
-            font-size: 1rem;
+            margin: 5px 0;
         }
     }
     </style>
 """, unsafe_allow_html=True)
-
 
 # -------------------- RESPONSES FILE SETUP --------------------
 RESPONSES_FILE = "responses/responses.xlsx"
@@ -221,6 +166,7 @@ def next_question(selected):
         st.session_state.page = "results"
     st.rerun()
 
+
 def save_responses():
     df = questions.copy()
     df["answer"] = st.session_state.answers
@@ -245,7 +191,8 @@ if st.session_state.page == "intro":
     """)
     if st.button("🚀 Start the Profiler"):
         st.session_state.page = "quiz"
-        st.experimental_rerun()
+        st.rerun()
+
 
 # -------------------- QUIZ PAGE --------------------
 elif st.session_state.page == "quiz":
@@ -289,10 +236,12 @@ elif st.session_state.page == "results":
     if st.button("💼 Explore Careers"):
         st.session_state.page = "careers"
         st.session_state.top_interests = top
-        st.experimental_rerun()
+        st.rerun()
+
     if st.button("🔁 Restart"):
         restart()
-        st.experimental_rerun()
+        st.rerun()
+
 
 # -------------------- CAREER PAGE --------------------
 elif st.session_state.page == "careers":
@@ -307,4 +256,5 @@ elif st.session_state.page == "careers":
                 st.markdown(f"### {cat} — {row.iloc[0]['careers']}")
     if st.button("🏠 Back to Start"):
         restart()
-        st.experimental_rerun()
+        st.rerun()
+
