@@ -5,28 +5,38 @@ import plotly.express as px
 # -------------------- PAGE SETUP --------------------
 st.set_page_config(page_title="SkillBot Career & Personality Profiler", layout="centered")
 
-# -------------------- CUSTOM LIGHT THEME --------------------
+# -------------------- CUSTOM LIGHT THEME (FULL PAGE BACKGROUND) --------------------
 st.markdown("""
     <style>
-    body {
+    html, body, [data-testid="stAppViewContainer"], [data-testid="stAppViewBlockContainer"], .stApp {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        background-color: #f5f9ff; /* 👈 Light full-page background */
+        background-size: cover;
+        background-attachment: fixed;
         font-family: 'Poppins', sans-serif;
-        background-color: #f5f9ff; /* 👈 Light blue background */
     }
+
     .stApp {
         max-width: 900px;
-        margin: auto;
+        margin: 40px auto;
         background-color: #ffffff;
         padding: 30px 40px;
         border-radius: 15px;
         box-shadow: 0px 4px 12px rgba(0,0,0,0.08);
     }
+
     h1, h2, h3 {
         color: #004c91;
         text-align: center;
     }
+
     p, label, div, span {
         color: #333333;
     }
+
     .stButton > button {
         background-color: #1e88e5;
         color: white;
@@ -41,6 +51,7 @@ st.markdown("""
         background-color: #1565c0;
         transform: scale(1.03);
     }
+
     .question-box {
         background-color: #f0f6ff;
         padding: 25px;
@@ -49,6 +60,7 @@ st.markdown("""
         margin-top: 20px;
         box-shadow: 0px 3px 8px rgba(0,0,0,0.05);
     }
+
     .css-1d391kg, .block-container {
         padding-top: 1rem;
     }
