@@ -12,7 +12,7 @@ st.markdown("""
     <style>
     body {
         font-family: 'Poppins', sans-serif;
-        background: linear-gradient(to right, #e0f7fa, #f1f8e9);
+        background: linear-gradient(to right, #a1c4fd, #c2e9fb); /* 👈 Updated gradient */
     }
     .stApp {
         max-width: 700px;
@@ -166,7 +166,6 @@ def next_question(selected):
         st.session_state.page = "results"
     st.rerun()
 
-
 def save_responses():
     df = questions.copy()
     df["answer"] = st.session_state.answers
@@ -192,7 +191,6 @@ if st.session_state.page == "intro":
     if st.button("🚀 Start the Profiler"):
         st.session_state.page = "quiz"
         st.rerun()
-
 
 # -------------------- QUIZ PAGE --------------------
 elif st.session_state.page == "quiz":
@@ -242,7 +240,6 @@ elif st.session_state.page == "results":
         restart()
         st.rerun()
 
-
 # -------------------- CAREER PAGE --------------------
 elif st.session_state.page == "careers":
     st.title("💼 Career Suggestions")
@@ -257,4 +254,5 @@ elif st.session_state.page == "careers":
     if st.button("🏠 Back to Start"):
         restart()
         st.rerun()
+
 
