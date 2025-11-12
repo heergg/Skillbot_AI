@@ -86,7 +86,6 @@ if choice == "Home":
         - **RIASEC (Holland Codes)** → measures your work interests  
         - **TCI (Temperament & Character Inventory)** → measures your personality
     """)
-    st.image("https://upload.wikimedia.org/wikipedia/commons/3/3c/Holland_RIASEC_model.png", use_container_width=True)
     if st.button("Start Now ➡️"):
         st.session_state.page = "quiz"
         st.session_state.index = 0
