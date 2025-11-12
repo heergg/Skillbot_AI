@@ -304,3 +304,42 @@ elif choice == "Dashboard":
             restart_all()
             st.session_state.sidebar_choice = "Home" # IMPORTANT: Update sidebar choice
             st.rerun()
+            
+# =====================================================
+# PROFILE CREATION (Hidden Tab)
+# =====================================================
+elif choice == "Profile Creation (Hidden)":
+    st.title("👤 SkillBot AI - Profile Creation")
+    st.write("Please fill your details and upload your marksheet:")
+
+    # Basic Info
+    name = st.text_input("Full Name")
+    age = st.number_input("Age", min_value=10, max_value=100)
+    gender = st.selectbox("Gender", ["Male", "Female", "Other"])
+
+    # Education Info
+    education = st.text_input("Current Class/Grade")
+
+    # Upload marksheet
+    marksheet = st.file_uploader("Upload Your Marksheet (PDF or Image)", type=["pdf", "png", "jpg", "jpeg"])
+
+    if st.button("Submit Profile"):
+        if not name or not age or not gender or not education or not marksheet:
+            st.error("Please fill all fields and upload marksheet")
+        else:
+            profile_data = {
+                "name": name,
+                "age": age,
+                "gender": gender,
+                "education": education,
+                "school": school,
+                "marksheet_filename": marksheet.name
+            }
+            with open(f"{name}_profile.json", "w") as f:
+                json.dump(profile_data, f)
+
+            st.success("Profile created successfully!")
+            st.json(profile_data)
+            if st.button("⬅️ Back to Dashboard"):
+                st.session_state.sidebar_choice = "Dashboard"
+                st.rerun()
