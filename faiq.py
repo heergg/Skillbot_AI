@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import json
+import os
+from datetime import datetime
 
 # -------------------- PAGE SETUP --------------------
 st.set_page_config(page_title="SkillBot Career & Personality Profiler", layout="centered")
@@ -17,15 +19,17 @@ except FileNotFoundError as e:
 
 # -------------------- SESSION STATE --------------------
 defaults = {
-    "page": "intro",  # RIASEC internal page flow
-    "index": 0,       # RIASEC question index
-    "answers": [],    # RIASEC answers
-    "tci_page": "intro",  # TCI internal page flow
-    "tci_index": 0,       # TCI question index
-    "tci_answers": [],    # TCI answers
+    "page": "intro",
+    "index": 0,
+    "answers": [],
+    "tci_page": "intro",
+    "tci_index": 0,
+    "tci_answers": [],
     "riasec_scores": None,
     "tci_scores": None,
-    "sidebar_choice": "Home",  # current section
+    "sidebar_choice": "Home",
+    "user_authenticated": False,
+    "user_data": None,
 }
 for key, val in defaults.items():
     if key not in st.session_state:
@@ -37,7 +41,7 @@ def restart_all():
         st.session_state[key] = val
 
 
-# -------------------- FLOW HELPERS --------------------
+# -------------------- HELPERS --------------------
 def next_question(selected):
     st.session_state.answers.append(selected)
     st.session_state.index += 1
@@ -55,15 +59,11 @@ def next_tci(selected):
 
 
 # =====================================================
-# MAIN NAVIGATION (Profile Creation hidden)
+# SIDEBAR NAVIGATION
 # =====================================================
 st.sidebar.title("🧭 Navigation")
-sidebar_options = ["Home", "RIASEC Test", "TCI Test", "Dashboard", "Profile Creation (Hidden)"]
-
-# Hide Profile Creation from visible sidebar
+sidebar_options = ["Home", "RIASEC Test", "TCI Test", "Dashboard", "Sign Up", "Profile Creation (Hidden)"]
 visible_options = [opt for opt in sidebar_options if "Hidden" not in opt]
-
-# If user is already in hidden page, don't reset choice
 if st.session_state.sidebar_choice == "Profile Creation (Hidden)":
     choice = "Profile Creation (Hidden)"
 else:
@@ -76,23 +76,16 @@ else:
     choice = st.session_state.sidebar_choice
 
 
-
 # =====================================================
 # HOME PAGE
 # =====================================================
 if choice == "Home":
     st.title("🎓 SkillBot Career & Personality Profiler")
-    st.write(
-        """
-        Discover your ideal **career path** and **personality traits** using two scientifically
-        proven models:
+    st.write("""
+        Discover your ideal **career path** and **personality traits** using:
         - **RIASEC (Holland Codes)** → measures your work interests  
         - **TCI (Temperament & Character Inventory)** → measures your personality
-
-        Take both tests to unlock your personalized dashboard!
-        """
-    )
-    st.image("https://upload.wikimedia.org/wikipedia/commons/3/3c/Holland_RIASEC_model.png", use_container_width=True)
+    """)
     if st.button("Start Now ➡️"):
         st.session_state.page = "quiz"
         st.session_state.index = 0
@@ -100,19 +93,18 @@ if choice == "Home":
         st.session_state.sidebar_choice = "RIASEC Test"
         st.rerun()
 
+
 # =====================================================
 # RIASEC TEST
 # =====================================================
 elif choice == "RIASEC Test":
     if st.session_state.page == "intro":
         st.title("🧭 RIASEC Interest Profiler")
-        st.write("Rate how much you’d enjoy different work activities.")
         if st.button("Start RIASEC Test"):
             st.session_state.page = "quiz"
             st.session_state.index = 0
             st.session_state.answers = []
             st.rerun()
-
     elif st.session_state.page == "quiz":
         if st.session_state.index < len(questions):
             q_idx = st.session_state.index
@@ -130,30 +122,22 @@ elif choice == "RIASEC Test":
             for i, (label, icon) in enumerate(options.items()):
                 if cols[i].button(f"{icon} {label}", key=f"riasec_q{q_idx}_option{i}"):
                     next_question(label)
-        else:
-            st.session_state.page = "riasec_results"
-            st.rerun()
-
     elif st.session_state.page == "riasec_results":
         st.title("Your RIASEC Profile")
-        if not st.session_state.answers:
-            st.warning("Please complete the RIASEC test first.")
-        else:
-            df = questions.copy()
-            df["answer"] = st.session_state.answers
-            rating_map = {"Strongly Disagree": 1, "Disagree": 2, "Neutral": 3, "Agree": 4, "Strongly Agree": 5}
-            df["score"] = df["answer"].map(rating_map)
-            riasec_scores = df.groupby("category")["score"].mean().sort_values(ascending=False)
-            st.session_state.riasec_scores = riasec_scores
+        df = questions.copy()
+        df["answer"] = st.session_state.answers
+        rating_map = {"Strongly Disagree": 1, "Disagree": 2, "Neutral": 3, "Agree": 4, "Strongly Agree": 5}
+        df["score"] = df["answer"].map(rating_map)
+        riasec_scores = df.groupby("category")["score"].mean().sort_values(ascending=False)
+        st.session_state.riasec_scores = riasec_scores
+        st.bar_chart(riasec_scores)
+        top = riasec_scores.head(3).index.tolist()
+        st.success(f"Your top RIASEC types are: **{', '.join(top)}**")
+        if st.button("Next ➡️ Go to TCI Test"):
+            st.session_state.tci_page = "intro"
+            st.session_state.sidebar_choice = "TCI Test"
+            st.rerun()
 
-            st.bar_chart(riasec_scores)
-            top = riasec_scores.head(3).index.tolist()
-            st.success(f"Your top RIASEC types are: **{', '.join(top)}**")
-
-            if st.button("Next ➡️ Go to TCI Test"):
-                st.session_state.tci_page = "intro"
-                st.session_state.sidebar_choice = "TCI Test"
-                st.rerun()
 
 # =====================================================
 # TCI TEST
@@ -161,13 +145,11 @@ elif choice == "RIASEC Test":
 elif choice == "TCI Test":
     if st.session_state.tci_page == "intro":
         st.title("🧠 Temperament & Character Inventory (TCI)")
-        st.write("Measures seven personality traits that define your behavior and values.")
         if st.button("Start TCI Test"):
             st.session_state.tci_page = "quiz"
             st.session_state.tci_index = 0
             st.session_state.tci_answers = []
             st.rerun()
-
     elif st.session_state.tci_page == "quiz":
         if st.session_state.tci_index < len(tci_questions):
             q_idx = st.session_state.tci_index
@@ -179,10 +161,6 @@ elif choice == "TCI Test":
                 next_tci("T")
             if cols[1].button("❌ False", key=f"tci_q{q_idx}_false"):
                 next_tci("F")
-        else:
-            st.session_state.tci_page = "tci_results"
-            st.rerun()
-
     elif st.session_state.tci_page == "tci_results":
         st.title("Your TCI Personality Profile")
         df = tci_questions.copy()
@@ -195,10 +173,10 @@ elif choice == "TCI Test":
                      labels={"x": "Trait", "y": "Score"},
                      title="Temperament and Character Dimensions")
         st.plotly_chart(fig, use_container_width=True)
-        st.info("High scores = stronger presence of that trait.")
         if st.button("View Combined Dashboard ➡️"):
             st.session_state.sidebar_choice = "Dashboard"
             st.rerun()
+
 
 # =====================================================
 # DASHBOARD
@@ -209,75 +187,84 @@ elif choice == "Dashboard":
     tci_scores = st.session_state.get("tci_scores", None)
 
     if riasec_scores is None or tci_scores is None:
-        st.warning("⚠️ Please complete both tests first (RIASEC and TCI).")
+        st.warning("⚠️ Please complete both tests first.")
     else:
         col1, col2 = st.columns(2)
         with col1:
             st.subheader("RIASEC Interests")
             st.bar_chart(riasec_scores)
         with col2:
-            st.subheader("TCI Personality Traits")
+            st.subheader("TCI Traits")
             st.bar_chart(tci_scores)
 
         st.divider()
-        st.subheader("🧩 Insight Summary")
+        st.subheader("Insight Summary")
         top_interest = riasec_scores.idxmax()
         top_trait = tci_scores.idxmax()
-        st.write(f"Your strongest **career interest** is **{top_interest}**, and your dominant **personality trait** is **{top_trait}**.")
+        st.write(f"Top Interest: **{top_interest}**, Top Trait: **{top_trait}**")
 
-        if top_interest == "Social" and top_trait in ["Cooperativeness", "Reward Dependence"]:
-            st.success("✅ You might excel in people-centered fields such as teaching, healthcare, or counseling.")
-        elif top_interest == "Investigative" and top_trait in ["Persistence", "Self-Directedness"]:
-            st.success("✅ You may thrive in analytical or research careers, like data science or engineering.")
-        elif top_interest == "Artistic" and top_trait in ["Novelty Seeking", "Self-Transcendence"]:
-            st.success("✅ Creative roles such as design, writing, or media could fit your personality.")
-        else:
-            st.info("Use both profiles to guide your exploration — your mix of traits is unique!")
+        st.info("Use both profiles to guide your career choices!")
 
         st.divider()
         if st.button("✨ Want more personalized results?"):
+            st.session_state.sidebar_choice = "Sign Up"
+            st.rerun()
+
+
+# =====================================================
+# SIGN UP
+# =====================================================
+elif choice == "Sign Up":
+    st.title("🔐 Create an Account")
+    username = st.text_input("Username")
+    password = st.text_input("Password", type="password")
+    confirm = st.text_input("Confirm Password", type="password")
+
+    if st.button("Sign Up"):
+        if not username or not password or not confirm:
+            st.error("Please fill all fields.")
+        elif password != confirm:
+            st.error("Passwords do not match.")
+        else:
+            os.makedirs("users", exist_ok=True)
+            data = {"username": username, "password": password}
+            with open(f"users/{username}.json", "w") as f:
+                json.dump(data, f)
+            st.success("Account created successfully!")
+            st.session_state.user_authenticated = True
             st.session_state.sidebar_choice = "Profile Creation (Hidden)"
             st.rerun()
 
-        if st.button("🏠 Back to Home"):
-            restart_all()
-            st.session_state.sidebar_choice = "Home"
-            st.rerun()
 
 # =====================================================
-# PROFILE CREATION (Hidden Tab)
+# PROFILE CREATION
 # =====================================================
 elif choice == "Profile Creation (Hidden)":
-    st.title("👤 SkillBot AI - Profile Creation")
-    st.write("Please fill your details and upload your marksheet:")
-
-    # Basic Info
+    st.title("👤 Create Your Profile")
     name = st.text_input("Full Name")
-    age = st.number_input("Age", min_value=10, max_value=100)
     gender = st.selectbox("Gender", ["Male", "Female", "Other"])
-
-    # Education Info
-    education = st.text_input("Current Class/Grade")
-
-    # Upload marksheet
-    marksheet = st.file_uploader("Upload Your Marksheet (PDF or Image)", type=["pdf", "png", "jpg", "jpeg"])
+    age = st.number_input("Age", min_value=10, max_value=100)
+    qualification = st.selectbox("Qualification Level", ["Matric", "Intermediate", "Bachelors", "Masters", "PhD"])
+    marksheet = st.file_uploader("Upload your marksheet (image or PDF)", type=["jpg", "jpeg", "png", "pdf"])
 
     if st.button("Submit Profile"):
-        if not name or not age or not gender or not education or not marksheet:
-            st.error("Please fill all fields and upload marksheet")
+        if not name or not gender or not age or not qualification or not marksheet:
+            st.error("Please fill all fields and upload your marksheet.")
         else:
-            profile_data = {
-                "name": name,
-                "age": age,
-                "gender": gender,
-                "education": education,
-                "marksheet_filename": marksheet.name
-            }
-            with open(f"{name}_profile.json", "w") as f:
-                json.dump(profile_data, f)
+            os.makedirs("profiles", exist_ok=True)
+            # Save marksheet temporarily
+            file_path = f"profiles/{datetime.now().strftime('%Y%m%d_%H%M%S')}_{marksheet.name}"
+            with open(file_path, "wb") as f:
+                f.write(marksheet.getbuffer())
 
+            profile = {
+                "name": name,
+                "gender": gender,
+                "age": age,
+                "qualification": qualification,
+                "marksheet_file": file_path
+            }
+            with open(f"profiles/{name}_profile.json", "w") as f:
+                json.dump(profile, f)
             st.success("Profile created successfully!")
-            st.json(profile_data)
-            if st.button("⬅️ Back to Dashboard"):
-                st.session_state.sidebar_choice = "Dashboard"
-                st.rerun()
+            st.json(profile)
