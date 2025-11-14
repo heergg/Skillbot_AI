@@ -15,10 +15,7 @@ if "index" not in st.session_state:
     st.session_state.index = 0
 if "answers" not in st.session_state:
     st.session_state.answers = []
-# -------------------- ENFORCE LOGIN --------------------
-if not st.session_state.logged_in:
-    st.warning("⚠️ Please register or login first to access SkillBot Profiler.")
-    st.stop()
+
 # -------------------- NAVBAR --------------------
 col1, col2 = st.columns([0.8,0.2])
 with col1:
