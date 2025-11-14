@@ -15,6 +15,10 @@ if "index" not in st.session_state:
     st.session_state.index = 0
 if "answers" not in st.session_state:
     st.session_state.answers = []
+# -------------------- ENFORCE LOGIN --------------------
+if not st.session_state.logged_in:
+    st.warning("⚠️ Please register or login first to access SkillBot Profiler.")
+    st.stop()
 # -------------------- NAVBAR --------------------
 col1, col2 = st.columns([0.8,0.2])
 with col1:
@@ -34,7 +38,7 @@ with col2:
             st.session_state.index = 0
             st.session_state.page = "home"
             st.stop()
-
+# -------------------- Register --------------------
 if st.session_state.get("show_register", False):
     st.subheader("Register Now")
     email = st.text_input("Email")
@@ -51,9 +55,7 @@ if st.session_state.get("show_register", False):
             st.stop()  # re-render to show login form
         else:
             st.error("Email already exists!")
-
-
-
+# -------------------- Login --------------------
 elif st.session_state.get("show_login", False):
     st.subheader("Sign In")
 
