@@ -1,0 +1,2 @@
+id,user_id,created_at,riasec_R,riasec_I,riasec_A,riasec_S,riasec_E,riasec_C,tci_Persistence,tci_HarmAvoidance,tci_Cooperativeness,tci_NoveltySeeking,tci_RewardDependence,tci_SelfDirectedness,tci_SelfTranscendence
+ed3eb214-18c2-4815-8faa-953d8f17af11,6c3dca93-0540-4c3c-95e1-18f13c1424c5,2025-11-17 14:01:51.875421,3.0,3.8,3.8,3.0,3.6,4.0,2,2,3,1,2,1,3
