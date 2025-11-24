@@ -314,9 +314,7 @@ elif choice == "Profile Creation (Hidden)":
                             st.session_state.user.id, st.session_state.riasec_scores, st.session_state.tci_scores
                         )
 
-# Ensure paddlepaddle is installed before paddleocr is used
-!pip install paddlepaddle
-!pip install paddleocr opencv-python pandas
+
 
 import cv2
 import numpy as np
