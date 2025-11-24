@@ -3,5 +3,11 @@ pandas
 matplotlib
 plotly
 openpyxl
+paddlepaddle
+paddleocr
+opencv-python
+supabase
+
+
 
 
