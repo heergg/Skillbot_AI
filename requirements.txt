@@ -1,12 +1,15 @@
 streamlit
 pandas
-matplotlib
 plotly
-openpyxl
+supabase
+numpy
+opencv-python-headless
+pillow
 paddlepaddle
 paddleocr
-opencv-python-headless
-supabase
+python-dotenv
+
+
 
 
 
